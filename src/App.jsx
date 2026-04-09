@@ -438,10 +438,14 @@ export default function App() {
     const next = [...msgs, { role:"user", content:t }];
     setMsgs(next); setLoading(true);
     try {
-      const res = await fetch("/api/chat", {
-        method:"POST", headers:{"Content-Type":"application/json"},
+      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+          "Authorization":"Bearer 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"
+        },
         body: JSON.stringify({
-          model:"llama3-8b-8192", max_tokens:300,
+          model:"llama-3.1-8b-instant", max_tokens:300,
           messages: [{role:"system",content:SYSTEM_PROMPT},...next.slice(-20).map(m=>({role:m.role,content:m.content.replace("[MOSTRAR_CITA]","").trim()})).filter(m=>m.content)],
         }),
       });
@@ -462,10 +466,14 @@ export default function App() {
       const next = [...msgs, previewMsg];
       setMsgs(next); setLoading(true);
       try {
-        const res = await fetch("/api/chat", {
-          method:"POST", headers:{"Content-Type":"application/json"},
+        const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json",
+            "Authorization":"Bearer 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"
+          },
           body: JSON.stringify({
-            model:"llama3-8b-8192", max_tokens:600,
+            model:"llama-3.1-8b-instant", max_tokens:600,
             messages:[{role:"system",content:SYSTEM_PROMPT + "\n\nEl cliente ha enviado una foto de una carta oficial. Analízala y tradúcela al español."},{role:"user",content:"El cliente ha subido una foto de carta oficial francesa. Analízala, tradúcela y explica qué le piden."}],
           }),
         });
@@ -484,6 +492,9 @@ export default function App() {
 
   const onBooked = (d) => {
     setTimeout(()=>setMsgs(p=>[...p,{role:"assistant",content:`Perfecto, cita reservada para el ${d} 🗓️\n\nTe contactaremos para confirmarla.`}]),400);
+    // Send WhatsApp notification to admin
+    const msg = encodeURIComponent(`Nueva cita GestiFR 📅\nFecha: ${d}\n\nPor favor confirma la disponibilidad.`);
+    window.open(`https://wa.me/33612186263?text=${msg}`, "_blank");
   };
 
   const share = () => {
@@ -914,4 +925,3 @@ export default function App() {
     </div>
   );
 }
-
