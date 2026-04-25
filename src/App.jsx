@@ -462,3 +462,235 @@ export default function App() {
       setMsgs(next);
       setLoading(true);
       setImgLoading(true);
+      try {
+        const res = await fetch("/api/chat", {
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body: JSON.stringify({
+            model:"llama-3.1-8b-instant",
+            max_tokens:600,
+            messages:[
+              {role:"system",content:SYSTEM_PROMPT},
+              {role:"user",content:"El cliente ha subido una foto de carta oficial francesa. Analízala, tradúcela al español y explica qué le piden."}
+            ],
+          }),
+        });
+        const data = await res.json();
+        const reply = data.choices?.[0]?.message?.content||"No pude leer la imagen. Escríbeme el texto de la carta.";
+        setMsgs([...next, { role:"assistant", content:reply }]);
+      } catch(err) {
+        setMsgs([...next, { role:"assistant", content:"Ha habido un problema al analizar la imagen." }]);
+      }
+      setLoading(false);
+      setImgLoading(false);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const openChat = (s=null) => {
+    setMsgs([{ role:"assistant", content:s?(INTROS[s.id]||DEFAULT_INTRO):DEFAULT_INTRO }]);
+    setView("chat");
+  };
+
+  const onBooked = (d) => {
+    setTimeout(()=>setMsgs(p=>[...p,{role:"assistant",content:`Perfecto, cita reservada para el ${d} 🗓️\n\nTe contactaremos para confirmarla.`}]),400);
+    // Send WhatsApp notification to admin
+    const msg = encodeURIComponent(`Nueva cita GestiFR 📅\nFecha: ${d}\n\nPor favor confirma la disponibilidad.`);
+    window.open(`https://wa.me/33612186263?text=${msg}`, "_blank");
+  };
+
+  const share = () => {
+    if (navigator.share) {
+      navigator.share({ title:"GestiFR", text:"Trámites en Francia en español — gestión profesional", url:window.location.href });
+    } else {
+      navigator.clipboard?.writeText(window.location.href);
+      alert("¡Enlace copiado!");
+    }
+  };
+
+  const featured = SERVICES.filter(s => s.hot).slice(0,6);
+  const NAV = [
+    { id:"home",      label:"Inicio",    icon:"🏠" },
+    { id:"gestiones", label:"Servicios", icon:"☰" },
+    { id:"tarifas",   label:"Tarifas",   icon:"€" },
+    { id:"legal",     label:"Legal",     icon:"⚖️" },
+  ];
+
+  const onlineNow = isOnline();
+
+  return (
+    <div style={{fontFamily:"'Inter','Segoe UI',sans-serif",minHeight:"100vh",background:T.bg,maxWidth:"100%",margin:"0 auto",display:"flex",flexDirection:"column",color:T.text,transition:"background 0.3s,color 0.3s"}}>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+      <style>{`*{box-sizing:border-box;margin:0;padding:0}html,body{width:100%;height:100%;overflow-x:hidden;}#root{width:100%;}::-webkit-scrollbar{display:none}input:focus,textarea:focus{border-color:${T.blue}!important;outline:none}::placeholder{color:${T.muted}}@keyframes pulse{0%,100%{box-shadow:0 4px 20px rgba(59,130,246,0.5)}50%{box-shadow:0 4px 30px rgba(59,130,246,0.8)}}@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}`}</style>
+
+      {showCal && <Modal onClose={()=>setShowCal(false)} onBooked={d=>{setShowCal(false);onBooked(d);}} T={T}/>}
+      {selectedService && (
+        <ServiceDetail service={selectedService} onClose={()=>setSelectedService(null)}
+          onChat={()=>{setSelectedService(null);openChat(selectedService);}}
+          onCita={()=>{setSelectedService(null);setShowCal(true);}} T={T}/>
+      )}
+
+      {/* FLOATING CHAT BUTTON */}
+      {view!=="chat" && (
+        <div onClick={()=>openChat()} style={{position:"fixed",bottom:75,right:20,zIndex:50,background:T.blue,borderRadius:"50%",width:56,height:56,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,cursor:"pointer",animation:"pulse 2s ease-in-out infinite",boxShadow:`0 4px 20px ${T.blue}88`}}>
+          💬
+          <div style={{position:"absolute",top:-2,right:-2,width:14,height:14,borderRadius:"50%",background:onlineNow?T.green:"#94A3B8",border:`2px solid ${T.bg}`}}/>
+        </div>
+      )}
+
+      {/* CHAT */}
+      {view==="chat" && (
+        <div style={{display:"flex",flexDirection:"column",height:"100vh",background:T.bg}}>
+          <div style={{background:T.card,borderBottom:`1px solid ${T.line}`,padding:"10px 16px",display:"flex",alignItems:"center",gap:12}}>
+            <button onClick={()=>setView("home")} style={{background:"none",border:"none",fontSize:24,cursor:"pointer",color:T.text,lineHeight:1}}>‹</button>
+            <div style={{position:"relative"}}>
+              <Av size={40}/>
+              <div style={{position:"absolute",bottom:0,right:0,width:10,height:10,borderRadius:"50%",background:onlineNow?T.green:"#94A3B8",border:`2px solid ${T.card}`}}/>
+            </div>
+            <div style={{flex:1}}>
+              <div style={{fontSize:14,fontWeight:700,color:T.text}}>{ADVISOR.name}</div>
+              <div style={{fontSize:11,color:onlineNow?T.green:"#94A3B8",fontWeight:600}}>
+                {onlineNow?"En línea · Respuesta en -2h":"Fuera de horario · Resp. mañana"}
+              </div>
+            </div>
+            <div style={{display:"flex",gap:6}}>
+              <button onClick={()=>setView("gestiones")} style={{background:T.blue,border:"none",borderRadius:20,padding:"6px 11px",fontSize:11,fontWeight:600,color:"white",cursor:"pointer",fontFamily:"inherit"}}>☰ Trámites</button>
+              <button onClick={()=>setShowCal(true)} style={{background:T.blue,border:"none",borderRadius:20,padding:"6px 11px",fontSize:11,fontWeight:600,color:"white",cursor:"pointer",fontFamily:"inherit"}}>📅 Cita</button>
+            </div>
+          </div>
+
+          {/* Schedule banner */}
+          <div style={{background:T.name==="dark"?"rgba(59,130,246,0.08)":"#EFF6FF",padding:"8px 16px",display:"flex",alignItems:"center",gap:8,borderBottom:`1px solid ${T.line}`}}>
+            <span style={{fontSize:14}}>🕐</span>
+            <span style={{fontSize:11,color:T.mut2}}>Lunes–Sábado · 9h a 19h · Respuesta garantizada en menos de 2h</span>
+          </div>
+
+          <div style={{flex:1,overflowY:"auto",padding:"16px 14px 8px"}}>
+            {msgs.map((m,i)=><ChatMsg key={i} msg={m} onCita={()=>setShowCal(true)} T={T}/>)}
+            {loading && (
+              <div style={{display:"flex",gap:8,marginBottom:12}}>
+                <Av/>
+                <div style={{display:"flex",flexDirection:"column",gap:3}}>
+                  <span style={{fontSize:11,color:T.muted,fontWeight:600,paddingLeft:2}}>{ADVISOR.name} · GestiFR</span>
+                  <div style={{background:T.card2,borderRadius:"4px 18px 18px 18px",border:`1px solid ${T.line}`}}><Dots T={T}/></div>
+                </div>
+              </div>
+            )}
+            <div ref={endRef}/>
+          </div>
+
+          <div style={{background:T.card,borderTop:`1px solid ${T.line}`}}>
+            <div style={{display:"flex",gap:8,padding:"8px 14px 6px"}}>
+              <textarea style={{flex:1,border:`1.5px solid ${T.line}`,borderRadius:22,padding:"10px 16px",fontSize:14,fontFamily:"inherit",resize:"none",background:T.card2,color:T.text}}
+                rows={1} placeholder="Escribe tu consulta..."
+                value={input} onChange={e=>setInput(e.target.value)}
+                onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send();}}}/>
+              <button onClick={()=>send()} disabled={!input.trim()||loading}
+                style={{width:42,height:42,borderRadius:"50%",border:"none",background:input.trim()&&!loading?T.blue:T.card2,color:input.trim()&&!loading?"white":T.muted,fontSize:16,cursor:input.trim()&&!loading?"pointer":"default",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.2s"}}>
+                ➤
+              </button>
+            </div>
+            <div style={{padding:"0 14px 12px"}}>
+              <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={e=>{if(e.target.files[0])sendImage(e.target.files[0]);e.target.value="";}}/>
+              <button onClick={()=>fileRef.current.click()} disabled={imgLoading||loading}
+                style={{width:"100%",background:T.card2,border:`1.5px dashed ${T.line}`,borderRadius:12,padding:"10px 0",fontSize:12,fontWeight:600,color:imgLoading?T.muted:T.blue,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:8}}
+                onMouseEnter={e=>e.currentTarget.style.borderColor=T.blue}
+                onMouseLeave={e=>e.currentTarget.style.borderColor=T.line}>
+                {imgLoading?"⏳ Analizando carta...":"📷 Subir foto de carta para traducir"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* NON-CHAT */}
+      {view!=="chat" && (
+        <>
+          {/* TOP BAR */}
+          <div style={{background:T.card,padding:"12px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:`1px solid ${T.line}`}}>
+            <Logo T={T}/>
+            <div style={{display:"flex",gap:8,alignItems:"center"}}>
+              <button onClick={share} style={{background:T.card2,border:`1px solid ${T.line}`,borderRadius:20,padding:"7px 12px",fontSize:11,fontWeight:600,color:T.mut2,cursor:"pointer",fontFamily:"inherit"}}>
+                🔗 Compartir
+              </button>
+              <button onClick={()=>setDarkMode(!darkMode)} style={{background:T.card2,border:`1px solid ${T.line}`,borderRadius:20,padding:"7px 12px",fontSize:14,cursor:"pointer",fontFamily:"inherit"}}>
+                {darkMode?"☀️":"🌙"}
+              </button>
+            </div>
+          </div>
+
+          {/* BOTTOM NAV */}
+          <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:480,background:T.card,borderTop:`1px solid ${T.line}`,display:"flex",zIndex:10}}>
+            {NAV.map(n=>(
+              <button key={n.id} onClick={()=>setView(n.id)}
+                style={{flex:1,padding:"10px 4px 12px",border:"none",background:"none",display:"flex",flexDirection:"column",alignItems:"center",gap:3,cursor:"pointer",fontFamily:"inherit"}}>
+                <span style={{fontSize:18}}>{n.icon}</span>
+                <span style={{fontSize:9,fontWeight:view===n.id?800:500,color:view===n.id?T.blue:T.muted,letterSpacing:0.5,textTransform:"uppercase"}}>{n.label}</span>
+                {view===n.id && <div style={{width:20,height:2,background:T.blue,borderRadius:2}}/>}
+              </button>
+            ))}
+          </div>
+
+          {/* HOME */}
+          {view==="home" && (
+            <div style={{flex:1,overflowY:"auto",paddingBottom:80}}>
+              <div style={{padding:"24px 20px 28px",opacity:mounted?1:0,animation:mounted?"fadeUp 0.5s ease forwards":"none"}}>
+
+                {/* Stats */}
+                <div style={{display:"flex",alignItems:"center",marginBottom:22,paddingBottom:18,borderBottom:`1px solid ${T.line}`}}>
+                  {[{v:"+2.400",l:"TRÁMITES"},{v:"98%",l:"SATISFACCIÓN"},{v:"48h",l:"RESP."}].map((s,i)=>(
+                    <div key={s.l} style={{flex:1,display:"flex",alignItems:"baseline",gap:4,paddingLeft:i>0?16:0,borderLeft:i>0?`1px solid ${T.line}`:"none",marginLeft:i>0?16:0}}>
+                      <span style={{fontSize:18,fontWeight:900,color:T.blue}}>{s.v}</span>
+                      <span style={{fontSize:9,fontWeight:700,color:T.muted,letterSpacing:0.8}}>{s.l}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Headline */}
+                <div style={{fontSize:28,fontWeight:900,color:T.text,lineHeight:1.15,marginBottom:10,letterSpacing:-1,animation:"fadeUp 0.6s ease 0.1s both"}}>
+                  La burocracia francesa,<br/>
+                  <span style={{color:T.cyan,fontStyle:"italic"}}>en tu idioma</span>
+                </div>
+                <div style={{fontSize:14,color:T.mut2,marginBottom:20,lineHeight:1.6,animation:"fadeUp 0.6s ease 0.2s both"}}>
+                  Gestiones en Francia para toda la comunidad hispanohablante.
+                </div>
+
+                {/* Schedule */}
+                <div style={{background:T.name==="dark"?"rgba(34,197,94,0.08)":"#F0FDF4",borderRadius:12,padding:"10px 14px",display:"flex",alignItems:"center",gap:10,marginBottom:16,border:`1px solid ${onlineNow?"rgba(34,197,94,0.2)":T.line}`}}>
+                  <div style={{width:8,height:8,borderRadius:"50%",background:onlineNow?T.green:"#94A3B8",flexShrink:0}}/>
+                  <div style={{fontSize:12,color:T.mut2}}>
+                    {onlineNow
+                      ? <><strong style={{color:T.green}}>En línea ahora</strong> · Respondemos en menos de 2h</>
+                      : <><strong style={{color:T.muted}}>Fuera de horario</strong> · Lunes–Sábado 9h–19h</>
+                    }
+                  </div>
+                </div>
+
+                {/* Buttons */}
+                <div style={{display:"flex",gap:8,marginBottom:16,animation:"fadeUp 0.6s ease 0.3s both"}}>
+                  <div onClick={()=>openChat()} style={{flex:2,background:T.blue,borderRadius:12,padding:"13px 0",display:"flex",alignItems:"center",justifyContent:"center",gap:8,cursor:"pointer",boxShadow:`0 4px 16px ${T.blue}44`}}>
+                    <span style={{fontSize:18}}>💬</span>
+                    <div>
+                      <div style={{fontSize:13,fontWeight:700,color:"white"}}>Chat gratuito</div>
+                      <div style={{fontSize:10,color:"rgba(255,255,255,0.75)"}}>Respuesta inmediata</div>
+                    </div>
+                  </div>
+                  <a href="https://wa.me/33612186263" style={{flex:1,textDecoration:"none",background:"#16A34A",borderRadius:12,padding:"13px 0",display:"flex",alignItems:"center",justifyContent:"center",gap:6,cursor:"pointer"}}>
+                    <span style={{fontSize:18}}>📱</span>
+                    <div style={{fontSize:13,fontWeight:700,color:"white"}}>WhatsApp</div>
+                  </a>
+                  <div onClick={()=>setShowCal(true)} style={{flex:1,background:T.card2,borderRadius:12,padding:"13px 0",display:"flex",alignItems:"center",justifyContent:"center",gap:6,cursor:"pointer",border:`1px solid ${T.line}`}}>
+                    <span style={{fontSize:18}}>📅</span>
+                    <div style={{fontSize:13,fontWeight:700,color:T.text}}>Cita</div>
+                  </div>
+                </div>
+
+                {/* Team */}
+                <div onClick={()=>openChat()} style={{background:T.card,borderRadius:14,padding:"14px 16px",display:"flex",alignItems:"center",gap:12,border:`1px solid ${T.line}`,cursor:"pointer",marginBottom:16,animation:"fadeUp 0.6s ease 0.4s both"}}>
+                  <div style={{display:"flex"}}>
+                    {ADVISORS.map((a,i)=>(
+                      <div key={a.name} style={{width:38,height:38,borderRadius:"50%",background:a.bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,color:"white",fontWeight:800,marginLeft:i>0?-12:0,border:`2px solid ${T.card}`}}>{a.avatar}</div>
+                    ))}
+                  </div>
+                  <div style={{flex:1}}>
+                    <div style={{fontSize:13,fontWeight:700,color:T.text}}>Nuestro equipo</div>
