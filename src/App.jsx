@@ -35,7 +35,7 @@ const LIGHT = {
 };
 
 // ─── SYSTEM PROMPT ────────────────────────────────────────────────────────────
-const SYSTEM_PROMPT = `Eres ${ADVISOR.name}, gestora administrativa de GestoriaFrance.
+const SYSTEM_PROMPT = `Eres ${ADVISOR.name}, gestora administrativa de GestiFR.
 
 REGLAS:
 1. Nunca digas que eres IA. Eres gestora del equipo.
@@ -66,7 +66,7 @@ PRECIOS:
 - Canje carnet conducir: 69€
 - Inscripción escolar: 39€
 - Compte impots.gouv: 39€ | France Connect: 29€
-- Rupture conventionnelle: 89€
+- Rupture conventionnelle: 89€ (incluye: explicación del proceso en español + traducción de documentos + ayuda con formulario CERFA)
 - Dossier alquiler: 59€
 
 FILOSOFÍA: Confirma en 1 frase, da precio, ofrece gestión con [MOSTRAR_CITA].
@@ -119,8 +119,8 @@ const SERVICES = [
     docs:["Avis d'imposition (si tienes)","NIR","Email válido"], time:"Mismo día", status:"" },
   { id:"franceconnect",icon:"🔗", title:"France Connect",          sub:"Accès à tous les services",        price:"29€",       hot:false, cat:"digital",
     docs:["Cuenta CAF, Ameli o impots.gouv","Email válido"], time:"Mismo día", status:"" },
-  { id:"rupture",      icon:"🤝", title:"Rupture Conventionnelle", sub:"Gestión de la salida",             price:"89€",       hot:false, cat:"empleo",
-    docs:["Contrato de trabajo actual","Últimas 3 nóminas","Propuesta del empleador (si existe)"], time:"5-10 días", status:"" },
+  { id:"rupture",      icon:"🤝", title:"Rupture Conventionnelle", sub:"Explicación · Documentos · CERFA", price:"89€",       hot:false, cat:"empleo",
+    docs:["✅ Explicación del proceso en español","✅ Traducción de todos los documentos","✅ Ayuda para rellenar el formulario CERFA","✅ Asesoramiento y gestión de documentación","📄 Contrato de trabajo actual","📄 Últimas 3 nóminas","📄 Propuesta del empleador (si existe)"], time:"5-10 días", status:"" },
 ];
 
 const INTROS = {
@@ -146,10 +146,15 @@ const INTROS = {
   escuela:`${getGreeting()} 👋 Te gestionamos la inscripción escolar por 39€. ¿Qué edad tiene el niño?`,
   impotsgouv:`${getGreeting()} 👋 Te creamos y configuramos la cuenta de impots.gouv por 39€.`,
   franceconnect:`${getGreeting()} 👋 France Connect te da acceso a todos los servicios públicos. Te lo configuramos por 29€.`,
-  rupture:`${getGreeting()} 👋 Te asesoramos y gestionamos la rupture conventionnelle por 89€.`,
+  rupture:`${getGreeting()} 👋 Te ayudamos con la rupture conventionnelle por 89€. Incluye:
+• Explicación completa del proceso en español
+• Traducción de todos los documentos
+• Ayuda para rellenar el formulario CERFA oficial
+
+¿Ya te la ha propuesto tu empleador o quieres proponerla tú?`,
 };
 
-const DEFAULT_INTRO = `${getGreeting()}, soy ${ADVISOR.name} 👋\n\nSoy gestora de GestoriaFrance. Estoy aquí para ayudarte con tus trámites en Francia.\n\n¿En qué puedo ayudarte?`;
+const DEFAULT_INTRO = `${getGreeting()}, soy ${ADVISOR.name} 👋\n\nSoy gestora de GestiFR. Estoy aquí para ayudarte con tus trámites en Francia.\n\n¿En qué puedo ayudarte?`;
 
 const TARIFAS = [
   { icon:"📨", name:"Carta oficial — traducción + explicación",    price:"79€" },
@@ -203,7 +208,7 @@ function Modal({ onClose, onBooked, T }) {
         <div style={{padding:"20px 20px 0",display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
           <div>
             <div style={{fontSize:16,fontWeight:700,color:T.text}}>{step===4?"Cita confirmada ✓":"Agendar cita"}</div>
-            {step<4&&<div style={{fontSize:12,color:T.muted,marginTop:2}}>GestoriaFrance · Lunes-Sábado 9h-19h</div>}
+            {step<4&&<div style={{fontSize:12,color:T.muted,marginTop:2}}>GestiFR · Lunes-Sábado 9h-19h</div>}
           </div>
           <button onClick={onClose} style={{background:T.card2,border:`1px solid ${T.line}`,borderRadius:"50%",width:32,height:32,cursor:"pointer",color:T.mut2,fontSize:15,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
         </div>
@@ -254,14 +259,9 @@ function Modal({ onClose, onBooked, T }) {
               <span style={{fontSize:20}}>📅</span>
               <div>
                 <div style={{fontSize:13,fontWeight:700,color:T.blue}}>{DE[day.getDay()]} {day.getDate()} de {ME[day.getMonth()]} · {slot}</div>
-                <div style={{fontSize:11,color:T.muted,marginTop:1}}>GestoriaFrance</div>
+                <div style={{fontSize:11,color:T.muted,marginTop:1}}>GestiFR</div>
               </div>
             </div>
             {[{k:"nombre",l:"Nombre completo *",p:"Tu nombre"},{k:"telefono",l:"Teléfono / WhatsApp *",p:"+34 / +33..."},{k:"nota",l:"Trámite (opcional)",p:"France Travail, NIR..."}].map(f=>(
               <div key={f.k} style={{marginBottom:12}}>
-                <label style={{fontSize:12,fontWeight:600,color:T.mut2,display:"block",marginBottom:5}}>{f.l}</label>
-                <input value={form[f.k]} onChange={e=>setForm({...form,[f.k]:e.target.value})} placeholder={f.p}
-                  style={{width:"100%",border:`1.5px solid ${T.line}`,borderRadius:10,padding:"10px 14px",fontSize:14,outline:"none",fontFamily:"inherit",color:T.text,background:T.card2}}/>
-              </div>
-            ))}
-            {err&&<div styl
+                <label style={{fontSize:12,
