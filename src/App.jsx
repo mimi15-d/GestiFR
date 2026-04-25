@@ -230,3 +230,235 @@ function Modal({ onClose, onBooked, T }) {
                 <div key={i} onClick={()=>{setDay(d);setStep(2);}} style={{textAlign:"center",padding:"10px 4px",borderRadius:12,border:`1px solid ${T.line}`,cursor:"pointer",background:T.card2}}
                   onMouseEnter={e=>e.currentTarget.style.borderColor=T.blue}
                   onMouseLeave={e=>e.currentTarget.style.borderColor=T.line}>
+                  <div style={{fontSize:9,color:T.muted,fontWeight:700}}>{DE[d.getDay()]}</div>
+                  <div style={{fontSize:18,fontWeight:800,color:T.text,margin:"2px 0"}}>{d.getDate()}</div>
+                  <div style={{fontSize:9,color:T.muted}}>{ME[d.getMonth()].slice(0,3)}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {step===2&&(
+          <div style={{padding:"0 20px"}}>
+            <div style={{fontSize:13,color:T.muted,marginBottom:12}}>{DE[day.getDay()]} {day.getDate()} de {ME[day.getMonth()]}</div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+              {SLOTS.map(h=>(
+                <div key={h} onClick={()=>{setSlot(h);setStep(3);}} style={{padding:"13px 0",textAlign:"center",borderRadius:12,border:`1px solid ${T.line}`,cursor:"pointer",fontSize:14,fontWeight:700,color:T.blue,background:T.card2}}
+                  onMouseEnter={e=>{e.currentTarget.style.background=T.name==="dark"?"#1E3A5F":"#EFF6FF";e.currentTarget.style.borderColor=T.blue;}}
+                  onMouseLeave={e=>{e.currentTarget.style.background=T.card2;e.currentTarget.style.borderColor=T.line;}}>
+                  {h}
+                </div>
+              ))}
+            </div>
+            <button onClick={()=>setStep(1)} style={{marginTop:14,background:"none",border:"none",color:T.muted,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>鈫� D铆a</button>
+          </div>
+        )}
+        {step===3&&(
+          <div style={{padding:"0 20px"}}>
+            <div style={{background:T.name==="dark"?"#1E3A5F":"#EFF6FF",borderRadius:12,padding:"12px 16px",marginBottom:18,border:`1px solid ${T.blue}44`,display:"flex",gap:10,alignItems:"center"}}>
+              <span style={{fontSize:20}}>馃搮</span>
+              <div>
+                <div style={{fontSize:13,fontWeight:700,color:T.blue}}>{DE[day.getDay()]} {day.getDate()} de {ME[day.getMonth()]} 路 {slot}</div>
+                <div style={{fontSize:11,color:T.muted,marginTop:1}}>GestiFR</div>
+              </div>
+            </div>
+            {[{k:"nombre",l:"Nombre completo *",p:"Tu nombre"},{k:"telefono",l:"Tel茅fono / WhatsApp *",p:"+34 / +33..."},{k:"nota",l:"Tr谩mite (opcional)",p:"France Travail, NIR..."}].map(f=>(
+              <div key={f.k} style={{marginBottom:12}}>
+                <label style={{fontSize:12,fontWeight:600,color:T.mut2,display:"block",marginBottom:5}}>{f.l}</label>
+                <input value={form[f.k]} onChange={e=>setForm({...form,[f.k]:e.target.value})} placeholder={f.p}
+                  style={{width:"100%",border:`1.5px solid ${T.line}`,borderRadius:10,padding:"10px 14px",fontSize:14,outline:"none",fontFamily:"inherit",color:T.text,background:T.card2}}/>
+              </div>
+            ))}
+            {err&&<div style={{color:"#F87171",fontSize:12,marginBottom:10}}>{err}</div>}
+            <button onClick={confirm} style={{width:"100%",background:T.blue,color:"white",border:"none",borderRadius:12,padding:"14px 0",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>Confirmar cita</button>
+            <button onClick={()=>setStep(2)} style={{width:"100%",background:"none",border:"none",color:T.muted,fontSize:13,cursor:"pointer",marginTop:10,fontFamily:"inherit"}}>鈫� Hora</button>
+          </div>
+        )}
+        {step===4&&(
+          <div style={{padding:"10px 20px 0",textAlign:"center"}}>
+            <div style={{width:64,height:64,borderRadius:"50%",background:T.name==="dark"?"#052E16":"#DCFCE7",border:`2px solid ${T.green}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26,margin:"0 auto 16px",color:T.green}}>鉁�</div>
+            <div style={{fontSize:17,fontWeight:800,color:T.text,marginBottom:8}}>隆Cita reservada!</div>
+            <div style={{background:T.name==="dark"?"#1E3A5F":"#EFF6FF",borderRadius:12,padding:16,marginBottom:20,border:`1px solid ${T.line}`}}>
+              <div style={{fontSize:14,fontWeight:700,color:T.blue}}>{DE[day.getDay()]} {day.getDate()} de {ME[day.getMonth()]} 路 {slot}</div>
+              <div style={{fontSize:12,color:T.muted,marginTop:4}}>Te contactaremos para confirmar</div>
+            </div>
+            <button onClick={onClose} style={{width:"100%",background:T.blue,color:"white",border:"none",borderRadius:12,padding:"13px 0",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>Entendido</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// 鈹€鈹€鈹€ SERVICE DETAIL MODAL 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+function ServiceDetail({ service, onClose, onChat, onCita, T }) {
+  return (
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.7)",zIndex:150,display:"flex",alignItems:"flex-end",justifyContent:"center",backdropFilter:"blur(6px)"}}
+      onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div style={{background:T.card,borderRadius:"24px 24px 0 0",width:"100%",maxWidth:480,maxHeight:"80vh",overflowY:"auto",paddingBottom:32}}>
+        <div style={{padding:"20px 20px 0",display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+          <div style={{display:"flex",alignItems:"center",gap:12}}>
+            <div style={{fontSize:28}}>{service.icon}</div>
+            <div>
+              <div style={{fontSize:16,fontWeight:700,color:T.text}}>{service.title}</div>
+              <div style={{fontSize:12,color:T.muted}}>{service.sub}</div>
+            </div>
+          </div>
+          <button onClick={onClose} style={{background:T.card2,border:`1px solid ${T.line}`,borderRadius:"50%",width:32,height:32,cursor:"pointer",color:T.mut2,fontSize:15,display:"flex",alignItems:"center",justifyContent:"center"}}>鉁�</button>
+        </div>
+        <div style={{padding:"0 20px",display:"flex",flexDirection:"column",gap:12}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",background:T.card2,borderRadius:12,padding:"12px 16px",border:`1px solid ${T.line}`}}>
+            <div>
+              <div style={{fontSize:11,color:T.muted,fontWeight:600,marginBottom:2}}>PRECIO</div>
+              <div style={{fontSize:22,fontWeight:900,color:service.soon?"#F59E0B":T.blue}}>{service.price}</div>
+            </div>
+            {service.time && (
+              <div style={{textAlign:"right"}}>
+                <div style={{fontSize:11,color:T.muted,fontWeight:600,marginBottom:2}}>TIEMPO ESTIMADO</div>
+                <div style={{fontSize:14,fontWeight:700,color:T.text}}>鈴� {service.time}</div>
+              </div>
+            )}
+          </div>
+          {service.docs && service.docs.length > 0 && (
+            <div style={{background:T.card2,borderRadius:12,padding:"14px 16px",border:`1px solid ${T.line}`}}>
+              <div style={{fontSize:12,fontWeight:700,color:T.text,marginBottom:10}}>馃搵 Documentos necesarios</div>
+              {service.docs.map((doc,i) => (
+                <div key={i} style={{display:"flex",alignItems:"center",gap:8,marginBottom:i<service.docs.length-1?8:0}}>
+                  <div style={{width:6,height:6,borderRadius:"50%",background:T.blue,flexShrink:0}}/>
+                  <div style={{fontSize:13,color:T.mut2}}>{doc}</div>
+                </div>
+              ))}
+            </div>
+          )}
+          {service.soon ? (
+            <div style={{background:"rgba(245,158,11,0.1)",borderRadius:12,padding:"14px 16px",border:"1px solid rgba(245,158,11,0.3)",textAlign:"center"}}>
+              <div style={{fontSize:14,fontWeight:700,color:"#F59E0B",marginBottom:4}}>馃敎 Pr贸ximamente disponible</div>
+              <div style={{fontSize:12,color:T.muted}}>Estamos coordinando este servicio con profesionales especializados.</div>
+            </div>
+          ) : (
+            <div style={{display:"flex",gap:8}}>
+              <button onClick={onChat} style={{flex:1,background:T.blue,color:"white",border:"none",borderRadius:12,padding:"13px 0",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
+                馃挰 Consultar gratis
+              </button>
+              <button onClick={onCita} style={{flex:1,background:T.card2,color:T.text,border:`1px solid ${T.line}`,borderRadius:12,padding:"13px 0",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
+                馃搮 Agendar cita
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Dots({ T }) {
+  return (
+    <div style={{display:"flex",gap:4,padding:"10px 14px",alignItems:"center"}}>
+      {[0,1,2].map(i=><div key={i} style={{width:6,height:6,borderRadius:"50%",background:T.muted,animation:`dot 1.2s ease-in-out ${i*0.2}s infinite`}}/>)}
+      <style>{`@keyframes dot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}`}</style>
+    </div>
+  );
+}
+
+function Av({ size=38 }) {
+  return (
+    <div style={{width:size,height:size,borderRadius:"50%",background:ADVISOR.bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:size*0.3,color:"white",fontWeight:800,flexShrink:0}}>
+      {ADVISOR.avatar}
+    </div>
+  );
+}
+
+function ChatMsg({ msg, onCita, T }) {
+  const isUser = msg.role === "user";
+  const text = (msg.content||"").replace("[MOSTRAR_CITA]","").trim();
+  const showCita = !isUser && msg.content?.includes("[MOSTRAR_CITA]");
+  return (
+    <div style={{display:"flex",justifyContent:isUser?"flex-end":"flex-start",marginBottom:14,gap:8}}>
+      {!isUser && <Av/>}
+      <div style={{maxWidth:"78%",display:"flex",flexDirection:"column",gap:4}}>
+        {!isUser && <span style={{fontSize:11,color:T.muted,fontWeight:600,paddingLeft:2}}>{ADVISOR.name} 路 GestiFR</span>}
+        {msg.image && <img src={msg.image} alt="carta" style={{maxWidth:"100%",borderRadius:12,marginBottom:4,border:`1px solid ${T.line}`}}/>}
+        {text && <div style={{padding:"11px 15px",background:isUser?T.blue:T.card2,color:isUser?"white":T.text,borderRadius:isUser?"18px 18px 4px 18px":"4px 18px 18px 18px",fontSize:14,lineHeight:1.65,whiteSpace:"pre-wrap",border:isUser?"none":`1px solid ${T.line}`}}>{text}</div>}
+        {showCita && (
+          <button onClick={onCita} style={{alignSelf:"flex-start",marginTop:4,background:T.blue,color:"white",border:"none",borderRadius:20,padding:"8px 16px",fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:6}}>
+            馃搮 Agendar cita
+          </button>
+        )}
+      </div>
+      {isUser && <div style={{width:34,height:34,borderRadius:"50%",background:T.card2,border:`1px solid ${T.line}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0,marginTop:18,color:T.muted}}>馃懁</div>}
+    </div>
+  );
+}
+
+// 鈹€鈹€鈹€ LOGO 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+function Logo({ T }) {
+  return (
+    <div style={{display:"flex",alignItems:"center",gap:8}}>
+      <div style={{width:34,height:34,borderRadius:10,background:`linear-gradient(135deg,${T.blue},${T.cyan})`,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,color:"white",fontSize:14,letterSpacing:-1}}>GF</div>
+      <div>
+        <div style={{fontSize:15,fontWeight:900,color:T.text,letterSpacing:-0.5}}>GestiFR</div>
+        <div style={{fontSize:9,color:T.muted,letterSpacing:0.8,textTransform:"uppercase"}}>Tr谩mites en Francia 路 En espa帽ol</div>
+      </div>
+    </div>
+  );
+}
+
+// 鈹€鈹€鈹€ APP 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+export default function App() {
+  const [view, setView] = useState("home");
+  const [msgs, setMsgs] = useState([{ role:"assistant", content:DEFAULT_INTRO }]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [imgLoading, setImgLoading] = useState(false);
+  const [showCal, setShowCal] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
+  const [search, setSearch] = useState("");
+  const [favorites, setFavorites] = useState([]);
+  const [selectedService, setSelectedService] = useState(null);
+  const [mounted, setMounted] = useState(false);
+  const endRef = useRef(null);
+  const fileRef = useRef(null);
+
+  const T = darkMode ? DARK : LIGHT;
+
+  useEffect(() => { setTimeout(() => setMounted(true), 100); }, []);
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior:"smooth" }); }, [msgs, loading]);
+
+  const toggleFav = (id) => setFavorites(f => f.includes(id) ? f.filter(x=>x!==id) : [...f, id]);
+
+  const filteredServices = SERVICES.filter(s =>
+    s.title.toLowerCase().includes(search.toLowerCase()) ||
+    s.sub.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const send = async (text) => {
+    const t = (text||input).trim();
+    if (!t||loading) return;
+    setInput("");
+    const next = [...msgs, { role:"user", content:t }];
+    setMsgs(next); setLoading(true);
+    try {
+      const res = await fetch("/api/chat", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({
+          model:"llama-3.1-8b-instant",
+          max_tokens:300,
+          messages:[{role:"system",content:SYSTEM_PROMPT},...next.slice(-20).map(m=>({role:m.role,content:m.content.replace("[MOSTRAR_CITA]","").trim()})).filter(m=>m.content)],
+        }),
+      });
+      const data = await res.json();
+      setMsgs([...next, { role:"assistant", content:data.choices?.[0]?.message?.content||"Perdona, 驴puedes repetirlo?" }]);
+    } catch { setMsgs([...next, { role:"assistant", content:"Ha habido un problema de conexi贸n." }]); }
+    setLoading(false);
+  };
+
+  const sendImage = async (file) => {
+    if (!file||loading||imgLoading) return;
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const previewMsg = { role:"user", content:"馃搸 He subido una carta. Por favor anal铆zala y trad煤cela.", image:e.target.result };
+      const next = [...msgs, previewMsg];
+      setMsgs(next);
+      setLoading(true);
+      setImgLoading(true);
