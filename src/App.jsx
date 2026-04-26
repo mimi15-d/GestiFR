@@ -694,3 +694,236 @@ export default function App() {
                   </div>
                   <div style={{flex:1}}>
                     <div style={{fontSize:13,fontWeight:700,color:T.text}}>Nuestro equipo</div>
+ <div style={{fontSize:11,color:T.muted,marginTop:1}}>Elena · Luna · María</div>
+                  </div>
+                  <div style={{display:"flex",alignItems:"center",gap:5}}>
+                    <div style={{width:7,height:7,borderRadius:"50%",background:onlineNow?T.green:"#94A3B8"}}/>
+                    <span style={{fontSize:11,color:onlineNow?T.green:T.muted,fontWeight:700}}>{onlineNow?"En línea":"Offline"}</span>
+                  </div>
+                </div>
+
+                {/* Favorites */}
+                {favorites.length > 0 && (
+                  <div style={{marginBottom:16,animation:"fadeUp 0.6s ease both"}}>
+                    <div style={{fontSize:11,fontWeight:700,color:T.muted,letterSpacing:1.2,textTransform:"uppercase",marginBottom:10}}>⭐ Mis favoritos</div>
+                    <div style={{display:"flex",flexDirection:"column",gap:8}}>
+                      {SERVICES.filter(s=>favorites.includes(s.id)).map(s=>(
+                        <div key={s.id} onClick={()=>setSelectedService(s)} style={{background:T.card,borderRadius:12,padding:"12px 14px",display:"flex",alignItems:"center",gap:12,border:`1px solid ${T.line}`,cursor:"pointer"}}>
+                          <span style={{fontSize:20}}>{s.icon}</span>
+                          <div style={{flex:1}}>
+                            <div style={{fontSize:13,fontWeight:700,color:T.text}}>{s.title}</div>
+                            <div style={{fontSize:11,color:T.muted}}>{s.sub}</div>
+                          </div>
+                          <div style={{fontSize:13,fontWeight:800,color:s.soon?"#F59E0B":T.blue}}>{s.price}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Featured */}
+                <div style={{fontSize:11,fontWeight:700,color:T.muted,letterSpacing:1.2,textTransform:"uppercase",marginBottom:10}}>Servicios destacados</div>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:12}}>
+                  {featured.map(s=>(
+                    <div key={s.id} onClick={()=>setSelectedService(s)} style={{background:T.card,borderRadius:12,padding:"11px 10px",border:`1px solid ${T.line}`,cursor:"pointer",position:"relative",overflow:"hidden"}}
+                      onMouseEnter={e=>e.currentTarget.style.borderColor=T.blue}
+                      onMouseLeave={e=>e.currentTarget.style.borderColor=T.line}>
+                      {s.hot && <div style={{position:"absolute",top:6,right:6,background:"#EC4899",color:"white",fontSize:8,fontWeight:800,padding:"1px 5px",borderRadius:20}}>★</div>}
+                      <div style={{fontSize:18,marginBottom:6}}>{s.icon}</div>
+                      <div style={{fontSize:11,fontWeight:700,color:T.text,marginBottom:2,lineHeight:1.25}}>{s.title}</div>
+                      <div style={{fontSize:9.5,color:T.muted,marginBottom:6,lineHeight:1.25}}>{s.sub}</div>
+                      <div style={{fontSize:13,fontWeight:900,color:s.soon?"#F59E0B":T.blue}}>{s.price}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div onClick={()=>setView("gestiones")} style={{background:T.card2,borderRadius:12,padding:"12px 16px",display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer",border:`1px solid ${T.line}`,marginBottom:16}}>
+                  <span style={{fontSize:13,fontWeight:600,color:T.mut2}}>Ver todos los servicios</span>
+                  <span style={{color:T.blue,fontSize:16}}>›</span>
+                </div>
+
+                {/* Reviews */}
+                <div style={{fontSize:11,fontWeight:700,color:T.muted,letterSpacing:1.2,textTransform:"uppercase",marginBottom:10}}>Lo que dicen nuestros clientes</div>
+                <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:16}}>
+                  {[
+                    {n:"Carlos M.",   txt:"Me inscribieron en France Travail en menos de 24h. Sin ellos no hubiera sabido por dónde empezar.", srv:"France Travail"},
+                    {n:"Valentina R.",txt:"Recibí una carta de la CAF y no entendía nada. Me la tradujeron y explicaron todo perfectamente.", srv:"Carta Oficial"},
+                    {n:"Miguel Á.",   txt:"Me gestionaron el NIR rápidamente. Muy profesionales y siempre disponibles.", srv:"N° Sécurité Sociale"},
+                    {n:"Lucía F.",    txt:"El dossier de alquiler lo tenía listo en 2 días. Conseguí el piso gracias a ellos.", srv:"Dossier Alquiler"},
+                    {n:"Andrés P.",   txt:"Me ayudaron con la APL y ahora recibo la ayuda cada mes. 100% recomendado.", srv:"APL"},
+                  ].map((r,i)=>(
+                    <div key={i} style={{background:T.card,borderRadius:14,padding:"14px 16px",border:`1px solid ${T.line}`}}>
+                      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
+                        <div style={{display:"flex",alignItems:"center",gap:8}}>
+                          <div style={{width:34,height:34,borderRadius:"50%",background:`linear-gradient(135deg,${T.blue},${T.cyan})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:800,color:"white"}}>{r.n[0]}</div>
+                          <div>
+                            <div style={{fontSize:13,fontWeight:700,color:T.text}}>{r.n}</div>
+                            <div style={{fontSize:10,color:T.muted}}>{r.srv}</div>
+                          </div>
+                        </div>
+                        <div style={{fontSize:12,color:"#F59E0B"}}>★★★★★</div>
+                      </div>
+                      <div style={{fontSize:12.5,color:T.mut2,lineHeight:1.6,fontStyle:"italic"}}>"{r.txt}"</div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Legal */}
+                <div onClick={()=>setView("legal")} style={{background:"rgba(59,130,246,0.05)",borderRadius:12,padding:"10px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer",border:"1px solid rgba(59,130,246,0.1)"}}>
+                  <span style={{fontSize:11,color:T.muted}}>⚖️ Aviso legal · Política de privacidad</span>
+                  <span style={{color:T.blue,fontSize:13}}>›</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* SERVICIOS */}
+          {view==="gestiones" && (
+            <div style={{flex:1,overflowY:"auto",paddingBottom:80}}>
+              <div style={{padding:"20px 20px 12px"}}>
+                <div style={{fontSize:22,fontWeight:900,color:T.text,letterSpacing:-0.5}}>Servicios</div>
+                {/* Search */}
+                <div style={{marginTop:12,position:"relative"}}>
+                  <span style={{position:"absolute",left:14,top:"50%",transform:"translateY(-50%)",fontSize:16,color:T.muted}}>🔍</span>
+                  <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar trámite..."
+                    style={{width:"100%",background:T.card,border:`1.5px solid ${T.line}`,borderRadius:24,padding:"10px 16px 10px 40px",fontSize:14,color:T.text,fontFamily:"inherit"}}/>
+                  {search && <button onClick={()=>setSearch("")} style={{position:"absolute",right:14,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",color:T.muted,fontSize:16}}>✕</button>}
+                </div>
+              </div>
+              <div style={{padding:"0 20px",display:"flex",flexDirection:"column",gap:8}}>
+                {filteredServices.length===0 ? (
+                  <div style={{textAlign:"center",padding:"40px 0",color:T.muted}}>
+                    <div style={{fontSize:32,marginBottom:8}}>🔍</div>
+                    <div style={{fontSize:14}}>No se encontraron servicios</div>
+                  </div>
+                ) : filteredServices.map(s=>(
+                  <div key={s.id} style={{background:T.card,borderRadius:14,padding:"14px 16px",display:"flex",alignItems:"center",gap:14,border:`1px solid ${T.line}`,cursor:"pointer"}}
+                    onMouseEnter={e=>e.currentTarget.style.borderColor=T.blue}
+                    onMouseLeave={e=>e.currentTarget.style.borderColor=T.line}>
+                    <div onClick={()=>setSelectedService(s)} style={{display:"flex",alignItems:"center",gap:14,flex:1}}>
+                      <div style={{width:44,height:44,borderRadius:12,background:T.name==="dark"?"rgba(59,130,246,0.1)":"#EFF6FF",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>{s.icon}</div>
+                      <div style={{flex:1}}>
+                        <div style={{fontSize:13.5,fontWeight:700,color:T.text}}>{s.title}</div>
+                        <div style={{fontSize:11.5,color:T.mut2,marginTop:2}}>{s.sub}</div>
+                        {s.time && <div style={{fontSize:10,color:T.muted,marginTop:3}}>⏱ {s.time}</div>}
+                      </div>
+                    </div>
+                    <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:6,flexShrink:0}}>
+                      <div style={{fontSize:14,fontWeight:900,color:s.soon?"#F59E0B":T.blue}}>{s.price}</div>
+                      <button onClick={()=>toggleFav(s.id)} style={{background:"none",border:"none",cursor:"pointer",fontSize:16,color:favorites.includes(s.id)?"#F59E0B":T.muted}}>
+                        {favorites.includes(s.id)?"★":"☆"}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                {/* Custom request banner */}
+                <a href="https://wa.me/33612186263" style={{textDecoration:"none",display:"block",background:"linear-gradient(135deg,#16A34A,#22C55E)",borderRadius:14,padding:"16px 18px",marginBottom:12,cursor:"pointer"}}>
+                  <div style={{fontSize:13,fontWeight:800,color:"white",marginBottom:4}}>¿No encuentras lo que necesitas?</div>
+                  <div style={{fontSize:12,color:"rgba(255,255,255,0.85)",lineHeight:1.55,marginBottom:12}}>Te ayudamos con cualquier trámite en Francia. Escríbenos por WhatsApp y te contestamos lo antes posible.</div>
+                  <div style={{display:"inline-flex",alignItems:"center",gap:8,background:"rgba(255,255,255,0.2)",borderRadius:20,padding:"7px 14px"}}>
+                    <span style={{fontSize:16}}>📱</span>
+                    <span style={{fontSize:12,fontWeight:700,color:"white"}}>Escribir por WhatsApp</span>
+                  </div>
+                </a>                <div onClick={()=>setShowCal(true)} style={{background:"linear-gradient(135deg,#1E3A8A,#1D4ED8)",borderRadius:14,padding:"14px 16px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",border:"1px solid #2563EB"}}>
+                  <div style={{width:44,height:44,borderRadius:12,background:"rgba(255,255,255,0.1)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22}}>📅</div>
+                  <div style={{flex:1}}>
+                    <div style={{fontSize:13.5,fontWeight:700,color:"white"}}>Agendar cita con gestor</div>
+                    <div style={{fontSize:11.5,color:"rgba(255,255,255,0.65)",marginTop:2}}>Gestión presencial del trámite</div>
+                  </div>
+                  <div style={{color:"rgba(255,255,255,0.4)",fontSize:18}}>›</div>
+                </div>
+              </div>
+              <div style={{height:16}}/>
+            </div>
+          )}
+
+          {/* TARIFAS */}
+          {view==="tarifas" && (
+            <div style={{flex:1,overflowY:"auto",paddingBottom:80}}>
+              <div style={{padding:"20px 20px 12px"}}>
+                <div style={{fontSize:22,fontWeight:900,color:T.text,letterSpacing:-0.5}}>Tarifas</div>
+                <div style={{fontSize:13,color:T.muted,marginTop:2}}>Precios fijos, sin sorpresas</div>
+              </div>
+              <div style={{padding:"0 20px",display:"flex",flexDirection:"column",gap:10}}>
+                <div style={{background:T.card,borderRadius:14,border:`1px solid ${T.line}`,overflow:"hidden"}}>
+                  {TARIFAS.map((t,i)=>(
+                    <div key={t.name} style={{padding:"12px 16px",display:"flex",alignItems:"center",gap:12,borderTop:i>0?`1px solid ${T.line}`:"none"}}>
+                      <span style={{fontSize:16,width:22,textAlign:"center"}}>{t.icon}</span>
+                      <div style={{flex:1,fontSize:12.5,color:T.text,fontWeight:500}}>{t.name}</div>
+                      <div style={{fontSize:13,fontWeight:700,color:t.soon?"#F59E0B":T.blue,flexShrink:0}}>{t.price}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{background:T.name==="dark"?"rgba(34,197,94,0.08)":"#F0FDF4",borderRadius:12,padding:"14px 16px",border:`1px solid ${T.name==="dark"?"rgba(34,197,94,0.2)":"#BBF7D0"}`,display:"flex",gap:12}}>
+                  <span style={{fontSize:18}}>✅</span>
+                  <div>
+                    <div style={{fontSize:13,fontWeight:700,color:T.green,marginBottom:3}}>Consulta siempre gratuita</div>
+                    <div style={{fontSize:12,color:T.muted,lineHeight:1.55}}>El chat es completamente gratuito. Solo pagas si contratas la gestión.</div>
+                  </div>
+                </div>
+                <button onClick={()=>setShowCal(true)} style={{width:"100%",background:T.blue,color:"white",border:"none",borderRadius:12,padding:"14px 0",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
+                  📅 Agendar cita con gestor
+                </button>
+                <div style={{height:8}}/>
+              </div>
+            </div>
+          )}
+
+          {/* LEGAL */}
+          {view==="legal" && (
+            <div style={{flex:1,overflowY:"auto",paddingBottom:80}}>
+              <div style={{padding:"20px 20px 12px"}}>
+                <div style={{fontSize:22,fontWeight:900,color:T.text,letterSpacing:-0.5}}>Legal & Privacidad</div>
+              </div>
+              <div style={{padding:"0 20px",display:"flex",flexDirection:"column",gap:10}}>
+                <div style={{background:T.card,borderRadius:14,border:`1px solid ${T.line}`,overflow:"hidden"}}>
+                  <div style={{padding:"14px 16px",borderBottom:`1px solid ${T.line}`,display:"flex",alignItems:"center",gap:10}}>
+                    <span style={{fontSize:20}}>📞</span>
+                    <div style={{fontSize:14,fontWeight:700,color:T.text}}>Contacto & Pago</div>
+                  </div>
+                  <div style={{padding:"14px 16px",display:"flex",flexDirection:"column",gap:10}}>
+                    <a href="https://wa.me/33612186263" style={{textDecoration:"none",display:"flex",alignItems:"center",gap:12,background:T.name==="dark"?"rgba(37,211,102,0.08)":"#F0FDF4",borderRadius:12,padding:"12px 14px",border:"1px solid rgba(37,211,102,0.2)"}}>
+                      <span style={{fontSize:22}}>💬</span>
+                      <div>
+                        <div style={{fontSize:13,fontWeight:700,color:T.green}}>WhatsApp</div>
+                        <div style={{fontSize:12,color:T.muted}}>Disponible 7 días</div>
+                      </div>
+                    </a>
+                    <div onClick={()=>setShowCal(true)} style={{display:"flex",alignItems:"center",gap:12,background:T.name==="dark"?"rgba(59,130,246,0.08)":"#EFF6FF",borderRadius:12,padding:"12px 14px",border:"1px solid rgba(59,130,246,0.2)",cursor:"pointer"}}>
+                      <span style={{fontSize:22}}>📅</span>
+                      <div>
+                        <div style={{fontSize:13,fontWeight:700,color:T.blue}}>Agendar cita</div>
+                        <div style={{fontSize:12,color:T.muted}}>Con un gestor del equipo</div>
+                      </div>
+                    </div>
+                    <div style={{display:"flex",alignItems:"center",gap:12,background:T.name==="dark"?"rgba(245,158,11,0.08)":"#FFFBEB",borderRadius:12,padding:"12px 14px",border:"1px solid rgba(245,158,11,0.2)"}}>
+                      <span style={{fontSize:22}}>💳</span>
+                      <div>
+                        <div style={{fontSize:13,fontWeight:700,color:"#F59E0B"}}>Pago por tarjeta</div>
+                        <div style={{fontSize:12,color:T.muted}}>Próximamente · Contacta por WhatsApp</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {[
+                  {icon:"📋",title:"Aviso Legal",content:"GestiFR es un servicio de asistencia administrativa. No somos abogados ni asesores jurídicos. Ofrecemos orientación y gestión de trámites en nombre del cliente, con su autorización expresa. Para trámites jurídicos recomendamos consultar con un profesional habilitado."},
+                  {icon:"✍️",title:"Mandato del cliente",content:"Cuando actuamos en nombre de un cliente ante organismos oficiales (CAF, CPAM, France Travail...), solicitamos un mandato escrito firmado antes de iniciar cualquier gestión."},
+                  {icon:"🔒",title:"Política de Privacidad (RGPD)",content:"Solo recogemos los datos necesarios para gestionar tu trámite. No cedemos ni vendemos tus datos. Los conservamos un máximo de 3 años. Tienes derecho de acceso, rectificación y supresión. Esta app no usa cookies de seguimiento."},
+                ].map(item=>(
+                  <div key={item.title} style={{background:T.card,borderRadius:14,border:`1px solid ${T.line}`,overflow:"hidden"}}>
+                    <div style={{padding:"14px 16px",borderBottom:`1px solid ${T.line}`,display:"flex",alignItems:"center",gap:10}}>
+                      <span style={{fontSize:20}}>{item.icon}</span>
+                      <div style={{fontSize:14,fontWeight:700,color:T.text}}>{item.title}</div>
+                    </div>
+                    <div style={{padding:"14px 16px",fontSize:12,color:T.mut2,lineHeight:1.7}}>{item.content}</div>
+                  </div>
+                ))}
+                <div style={{height:8}}/>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+                  }
