@@ -35,7 +35,7 @@ const LIGHT = {
 };
 
 // ─── SYSTEM PROMPT ────────────────────────────────────────────────────────────
-const SYSTEM_PROMPT = `Eres ${ADVISOR.name}, gestora administrativa de GestiFR.
+const SYSTEM_PROMPT = `Eres ${ADVISOR.name}, gestora administrativa de GestoriaFrance.
 
 REGLAS:
 1. Nunca digas que eres IA. Eres gestora del equipo.
@@ -66,7 +66,7 @@ PRECIOS:
 - Canje carnet conducir: 69€
 - Inscripción escolar: 39€
 - Compte impots.gouv: 39€ | France Connect: 29€
-- Rupture conventionnelle: 89€ (incluye: explicación del proceso en español + traducción de documentos + ayuda con formulario CERFA)
+- Rupture conventionnelle: 89€
 - Dossier alquiler: 59€
 
 FILOSOFÍA: Confirma en 1 frase, da precio, ofrece gestión con [MOSTRAR_CITA].
@@ -119,8 +119,8 @@ const SERVICES = [
     docs:["Avis d'imposition (si tienes)","NIR","Email válido"], time:"Mismo día", status:"" },
   { id:"franceconnect",icon:"🔗", title:"France Connect",          sub:"Accès à tous les services",        price:"29€",       hot:false, cat:"digital",
     docs:["Cuenta CAF, Ameli o impots.gouv","Email válido"], time:"Mismo día", status:"" },
-  { id:"rupture",      icon:"🤝", title:"Rupture Conventionnelle", sub:"Explicación · Documentos · CERFA", price:"89€",       hot:false, cat:"empleo",
-    docs:["✅ Explicación del proceso en español","✅ Traducción de todos los documentos","✅ Ayuda para rellenar el formulario CERFA","✅ Asesoramiento y gestión de documentación","📄 Contrato de trabajo actual","📄 Últimas 3 nóminas","📄 Propuesta del empleador (si existe)"], time:"5-10 días", status:"" },
+  { id:"rupture",      icon:"🤝", title:"Rupture Conventionnelle", sub:"Gestión de la salida",             price:"89€",       hot:false, cat:"empleo",
+    docs:["Contrato de trabajo actual","Últimas 3 nóminas","Propuesta del empleador (si existe)"], time:"5-10 días", status:"" },
 ];
 
 const INTROS = {
@@ -146,15 +146,10 @@ const INTROS = {
   escuela:`${getGreeting()} 👋 Te gestionamos la inscripción escolar por 39€. ¿Qué edad tiene el niño?`,
   impotsgouv:`${getGreeting()} 👋 Te creamos y configuramos la cuenta de impots.gouv por 39€.`,
   franceconnect:`${getGreeting()} 👋 France Connect te da acceso a todos los servicios públicos. Te lo configuramos por 29€.`,
-  rupture:`${getGreeting()} 👋 Te ayudamos con la rupture conventionnelle por 89€. Incluye:
-• Explicación completa del proceso en español
-• Traducción de todos los documentos
-• Ayuda para rellenar el formulario CERFA oficial
-
-¿Ya te la ha propuesto tu empleador o quieres proponerla tú?`,
+  rupture:`${getGreeting()} 👋 Te asesoramos y gestionamos la rupture conventionnelle por 89€.`,
 };
 
-const DEFAULT_INTRO = `${getGreeting()}, soy ${ADVISOR.name} 👋\n\nSoy gestora de GestiFR. Estoy aquí para ayudarte con tus trámites en Francia.\n\n¿En qué puedo ayudarte?`;
+const DEFAULT_INTRO = `${getGreeting()}, soy ${ADVISOR.name} 👋\n\nSoy gestora de GestoriaFrance. Estoy aquí para ayudarte con tus trámites en Francia.\n\n¿En qué puedo ayudarte?`;
 
 const TARIFAS = [
   { icon:"📨", name:"Carta oficial — traducción + explicación",    price:"79€" },
@@ -208,7 +203,7 @@ function Modal({ onClose, onBooked, T }) {
         <div style={{padding:"20px 20px 0",display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
           <div>
             <div style={{fontSize:16,fontWeight:700,color:T.text}}>{step===4?"Cita confirmada ✓":"Agendar cita"}</div>
-            {step<4&&<div style={{fontSize:12,color:T.muted,marginTop:2}}>GestiFR · Lunes-Sábado 9h-19h</div>}
+            {step<4&&<div style={{fontSize:12,color:T.muted,marginTop:2}}>GestoriaFrance · Lunes-Sábado 9h-19h</div>}
           </div>
           <button onClick={onClose} style={{background:T.card2,border:`1px solid ${T.line}`,borderRadius:"50%",width:32,height:32,cursor:"pointer",color:T.mut2,fontSize:15,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
         </div>
@@ -250,19 +245,19 @@ function Modal({ onClose, onBooked, T }) {
                 </div>
               ))}
             </div>
-            <button onClick={()=>setStep(1)} style={{marginTop:14,background:"none",border:"none",color:T.muted,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>鈫� D铆a</button>
+            <button onClick={()=>setStep(1)} style={{marginTop:14,background:"none",border:"none",color:T.muted,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>← Día</button>
           </div>
         )}
         {step===3&&(
           <div style={{padding:"0 20px"}}>
             <div style={{background:T.name==="dark"?"#1E3A5F":"#EFF6FF",borderRadius:12,padding:"12px 16px",marginBottom:18,border:`1px solid ${T.blue}44`,display:"flex",gap:10,alignItems:"center"}}>
-              <span style={{fontSize:20}}>馃搮</span>
+              <span style={{fontSize:20}}>📅</span>
               <div>
-                <div style={{fontSize:13,fontWeight:700,color:T.blue}}>{DE[day.getDay()]} {day.getDate()} de {ME[day.getMonth()]} 路 {slot}</div>
-                <div style={{fontSize:11,color:T.muted,marginTop:1}}>GestiFR</div>
+                <div style={{fontSize:13,fontWeight:700,color:T.blue}}>{DE[day.getDay()]} {day.getDate()} de {ME[day.getMonth()]} · {slot}</div>
+                <div style={{fontSize:11,color:T.muted,marginTop:1}}>GestoriaFrance</div>
               </div>
             </div>
-            {[{k:"nombre",l:"Nombre completo *",p:"Tu nombre"},{k:"telefono",l:"Tel茅fono / WhatsApp *",p:"+34 / +33..."},{k:"nota",l:"Tr谩mite (opcional)",p:"France Travail, NIR..."}].map(f=>(
+            {[{k:"nombre",l:"Nombre completo *",p:"Tu nombre"},{k:"telefono",l:"Teléfono / WhatsApp *",p:"+34 / +33..."},{k:"nota",l:"Trámite (opcional)",p:"France Travail, NIR..."}].map(f=>(
               <div key={f.k} style={{marginBottom:12}}>
                 <label style={{fontSize:12,fontWeight:600,color:T.mut2,display:"block",marginBottom:5}}>{f.l}</label>
                 <input value={form[f.k]} onChange={e=>setForm({...form,[f.k]:e.target.value})} placeholder={f.p}
@@ -271,15 +266,15 @@ function Modal({ onClose, onBooked, T }) {
             ))}
             {err&&<div style={{color:"#F87171",fontSize:12,marginBottom:10}}>{err}</div>}
             <button onClick={confirm} style={{width:"100%",background:T.blue,color:"white",border:"none",borderRadius:12,padding:"14px 0",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>Confirmar cita</button>
-            <button onClick={()=>setStep(2)} style={{width:"100%",background:"none",border:"none",color:T.muted,fontSize:13,cursor:"pointer",marginTop:10,fontFamily:"inherit"}}>鈫� Hora</button>
+            <button onClick={()=>setStep(2)} style={{width:"100%",background:"none",border:"none",color:T.muted,fontSize:13,cursor:"pointer",marginTop:10,fontFamily:"inherit"}}>← Hora</button>
           </div>
         )}
         {step===4&&(
           <div style={{padding:"10px 20px 0",textAlign:"center"}}>
-            <div style={{width:64,height:64,borderRadius:"50%",background:T.name==="dark"?"#052E16":"#DCFCE7",border:`2px solid ${T.green}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26,margin:"0 auto 16px",color:T.green}}>鉁�</div>
-            <div style={{fontSize:17,fontWeight:800,color:T.text,marginBottom:8}}>隆Cita reservada!</div>
+            <div style={{width:64,height:64,borderRadius:"50%",background:T.name==="dark"?"#052E16":"#DCFCE7",border:`2px solid ${T.green}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26,margin:"0 auto 16px",color:T.green}}>✓</div>
+            <div style={{fontSize:17,fontWeight:800,color:T.text,marginBottom:8}}>¡Cita reservada!</div>
             <div style={{background:T.name==="dark"?"#1E3A5F":"#EFF6FF",borderRadius:12,padding:16,marginBottom:20,border:`1px solid ${T.line}`}}>
-              <div style={{fontSize:14,fontWeight:700,color:T.blue}}>{DE[day.getDay()]} {day.getDate()} de {ME[day.getMonth()]} 路 {slot}</div>
+              <div style={{fontSize:14,fontWeight:700,color:T.blue}}>{DE[day.getDay()]} {day.getDate()} de {ME[day.getMonth()]} · {slot}</div>
               <div style={{fontSize:12,color:T.muted,marginTop:4}}>Te contactaremos para confirmar</div>
             </div>
             <button onClick={onClose} style={{width:"100%",background:T.blue,color:"white",border:"none",borderRadius:12,padding:"13px 0",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>Entendido</button>
@@ -290,7 +285,7 @@ function Modal({ onClose, onBooked, T }) {
   );
 }
 
-// 鈹€鈹€鈹€ SERVICE DETAIL MODAL 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+// ─── SERVICE DETAIL MODAL ─────────────────────────────────────────────────────
 function ServiceDetail({ service, onClose, onChat, onCita, T }) {
   return (
     <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.7)",zIndex:150,display:"flex",alignItems:"flex-end",justifyContent:"center",backdropFilter:"blur(6px)"}}
@@ -304,7 +299,7 @@ function ServiceDetail({ service, onClose, onChat, onCita, T }) {
               <div style={{fontSize:12,color:T.muted}}>{service.sub}</div>
             </div>
           </div>
-          <button onClick={onClose} style={{background:T.card2,border:`1px solid ${T.line}`,borderRadius:"50%",width:32,height:32,cursor:"pointer",color:T.mut2,fontSize:15,display:"flex",alignItems:"center",justifyContent:"center"}}>鉁�</button>
+          <button onClick={onClose} style={{background:T.card2,border:`1px solid ${T.line}`,borderRadius:"50%",width:32,height:32,cursor:"pointer",color:T.mut2,fontSize:15,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
         </div>
         <div style={{padding:"0 20px",display:"flex",flexDirection:"column",gap:12}}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",background:T.card2,borderRadius:12,padding:"12px 16px",border:`1px solid ${T.line}`}}>
@@ -315,13 +310,13 @@ function ServiceDetail({ service, onClose, onChat, onCita, T }) {
             {service.time && (
               <div style={{textAlign:"right"}}>
                 <div style={{fontSize:11,color:T.muted,fontWeight:600,marginBottom:2}}>TIEMPO ESTIMADO</div>
-                <div style={{fontSize:14,fontWeight:700,color:T.text}}>鈴� {service.time}</div>
+                <div style={{fontSize:14,fontWeight:700,color:T.text}}>⏱ {service.time}</div>
               </div>
             )}
           </div>
           {service.docs && service.docs.length > 0 && (
             <div style={{background:T.card2,borderRadius:12,padding:"14px 16px",border:`1px solid ${T.line}`}}>
-              <div style={{fontSize:12,fontWeight:700,color:T.text,marginBottom:10}}>馃搵 Documentos necesarios</div>
+              <div style={{fontSize:12,fontWeight:700,color:T.text,marginBottom:10}}>📋 Documentos necesarios</div>
               {service.docs.map((doc,i) => (
                 <div key={i} style={{display:"flex",alignItems:"center",gap:8,marginBottom:i<service.docs.length-1?8:0}}>
                   <div style={{width:6,height:6,borderRadius:"50%",background:T.blue,flexShrink:0}}/>
@@ -332,16 +327,16 @@ function ServiceDetail({ service, onClose, onChat, onCita, T }) {
           )}
           {service.soon ? (
             <div style={{background:"rgba(245,158,11,0.1)",borderRadius:12,padding:"14px 16px",border:"1px solid rgba(245,158,11,0.3)",textAlign:"center"}}>
-              <div style={{fontSize:14,fontWeight:700,color:"#F59E0B",marginBottom:4}}>馃敎 Pr贸ximamente disponible</div>
+              <div style={{fontSize:14,fontWeight:700,color:"#F59E0B",marginBottom:4}}>🔜 Próximamente disponible</div>
               <div style={{fontSize:12,color:T.muted}}>Estamos coordinando este servicio con profesionales especializados.</div>
             </div>
           ) : (
             <div style={{display:"flex",gap:8}}>
               <button onClick={onChat} style={{flex:1,background:T.blue,color:"white",border:"none",borderRadius:12,padding:"13px 0",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
-                馃挰 Consultar gratis
+                💬 Consultar gratis
               </button>
               <button onClick={onCita} style={{flex:1,background:T.card2,color:T.text,border:`1px solid ${T.line}`,borderRadius:12,padding:"13px 0",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
-                馃搮 Agendar cita
+                📅 Agendar cita
               </button>
             </div>
           )}
@@ -376,34 +371,34 @@ function ChatMsg({ msg, onCita, T }) {
     <div style={{display:"flex",justifyContent:isUser?"flex-end":"flex-start",marginBottom:14,gap:8}}>
       {!isUser && <Av/>}
       <div style={{maxWidth:"78%",display:"flex",flexDirection:"column",gap:4}}>
-        {!isUser && <span style={{fontSize:11,color:T.muted,fontWeight:600,paddingLeft:2}}>{ADVISOR.name} 路 GestiFR</span>}
+        {!isUser && <span style={{fontSize:11,color:T.muted,fontWeight:600,paddingLeft:2}}>{ADVISOR.name} · GestoriaFrance</span>}
         {msg.image && <img src={msg.image} alt="carta" style={{maxWidth:"100%",borderRadius:12,marginBottom:4,border:`1px solid ${T.line}`}}/>}
         {text && <div style={{padding:"11px 15px",background:isUser?T.blue:T.card2,color:isUser?"white":T.text,borderRadius:isUser?"18px 18px 4px 18px":"4px 18px 18px 18px",fontSize:14,lineHeight:1.65,whiteSpace:"pre-wrap",border:isUser?"none":`1px solid ${T.line}`}}>{text}</div>}
         {showCita && (
           <button onClick={onCita} style={{alignSelf:"flex-start",marginTop:4,background:T.blue,color:"white",border:"none",borderRadius:20,padding:"8px 16px",fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:6}}>
-            馃搮 Agendar cita
+            📅 Agendar cita
           </button>
         )}
       </div>
-      {isUser && <div style={{width:34,height:34,borderRadius:"50%",background:T.card2,border:`1px solid ${T.line}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0,marginTop:18,color:T.muted}}>馃懁</div>}
+      {isUser && <div style={{width:34,height:34,borderRadius:"50%",background:T.card2,border:`1px solid ${T.line}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0,marginTop:18,color:T.muted}}>👤</div>}
     </div>
   );
 }
 
-// 鈹€鈹€鈹€ LOGO 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+// ─── LOGO ─────────────────────────────────────────────────────────────────────
 function Logo({ T }) {
   return (
     <div style={{display:"flex",alignItems:"center",gap:8}}>
       <div style={{width:34,height:34,borderRadius:10,background:`linear-gradient(135deg,${T.blue},${T.cyan})`,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,color:"white",fontSize:14,letterSpacing:-1}}>GF</div>
       <div>
-        <div style={{fontSize:15,fontWeight:900,color:T.text,letterSpacing:-0.5}}>GestiFR</div>
-        <div style={{fontSize:9,color:T.muted,letterSpacing:0.8,textTransform:"uppercase"}}>Tr谩mites en Francia 路 En espa帽ol</div>
+        <div style={{fontSize:15,fontWeight:900,color:T.text,letterSpacing:-0.5}}>GestoriaFrance</div>
+        <div style={{fontSize:9,color:T.muted,letterSpacing:0.8,textTransform:"uppercase"}}>Trámites en Francia · En español</div>
       </div>
     </div>
   );
 }
 
-// 鈹€鈹€鈹€ APP 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+// ─── APP ──────────────────────────────────────────────────────────────────────
 export default function App() {
   const [view, setView] = useState("home");
   const [msgs, setMsgs] = useState([{ role:"assistant", content:DEFAULT_INTRO }]);
@@ -438,51 +433,45 @@ export default function App() {
     const next = [...msgs, { role:"user", content:t }];
     setMsgs(next); setLoading(true);
     try {
-      const res = await fetch("/api/chat", {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method:"POST", headers:{"Content-Type":"application/json"},
         body: JSON.stringify({
-          model:"llama-3.1-8b-instant",
-          max_tokens:300,
-          messages:[{role:"system",content:SYSTEM_PROMPT},...next.slice(-20).map(m=>({role:m.role,content:m.content.replace("[MOSTRAR_CITA]","").trim()})).filter(m=>m.content)],
+          model:"claude-sonnet-4-20250514", max_tokens:300, system:SYSTEM_PROMPT,
+          messages: next.slice(-20).map(m=>({role:m.role,content:m.content.replace("[MOSTRAR_CITA]","").trim()})).filter(m=>m.content),
         }),
       });
       const data = await res.json();
-      setMsgs([...next, { role:"assistant", content:data.choices?.[0]?.message?.content||"Perdona, 驴puedes repetirlo?" }]);
-    } catch { setMsgs([...next, { role:"assistant", content:"Ha habido un problema de conexi贸n." }]); }
+      setMsgs([...next, { role:"assistant", content:data.content?.find(b=>b.type==="text")?.text||"Perdona, ¿puedes repetirlo?" }]);
+    } catch { setMsgs([...next, { role:"assistant", content:"Ha habido un problema de conexión." }]); }
     setLoading(false);
   };
 
   const sendImage = async (file) => {
     if (!file||loading||imgLoading) return;
+    setImgLoading(true);
     const reader = new FileReader();
     reader.onload = async (e) => {
-      const previewMsg = { role:"user", content:"馃搸 He subido una carta. Por favor anal铆zala y trad煤cela.", image:e.target.result };
+      const base64 = e.target.result.split(",")[1];
+      const mediaType = file.type||"image/jpeg";
+      const previewMsg = { role:"user", content:"📎 He subido una carta para que la analices.", image:e.target.result };
       const next = [...msgs, previewMsg];
-      setMsgs(next);
-      setLoading(true);
-      setImgLoading(true);
+      setMsgs(next); setLoading(true);
       try {
-        const res = await fetch("/api/chat", {
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
+        const res = await fetch("https://api.anthropic.com/v1/messages", {
+          method:"POST", headers:{"Content-Type":"application/json"},
           body: JSON.stringify({
-            model:"llama-3.1-8b-instant",
-            max_tokens:600,
-            messages:[
-              {role:"system",content:SYSTEM_PROMPT},
-              {role:"user",content:"El cliente ha subido una foto de carta oficial francesa. Analízala, tradúcela al español y explica qué le piden."}
-            ],
+            model:"claude-sonnet-4-20250514", max_tokens:600,
+            system: SYSTEM_PROMPT + "\n\nEl cliente ha enviado una foto de una carta oficial francesa. Analízala: 1) Tradúcela al español 2) Explica qué le piden 3) Indica si hay fecha límite urgente 4) Ofrece gestionar la respuesta con precio y [MOSTRAR_CITA].",
+            messages:[{ role:"user", content:[
+              { type:"image", source:{ type:"base64", media_type:mediaType, data:base64 }},
+              { type:"text", text:"Analiza esta carta oficial francesa." }
+            ]}],
           }),
         });
         const data = await res.json();
-        const reply = data.choices?.[0]?.message?.content||"No pude leer la imagen. Escríbeme el texto de la carta.";
-        setMsgs([...next, { role:"assistant", content:reply }]);
-      } catch(err) {
-        setMsgs([...next, { role:"assistant", content:"Ha habido un problema al analizar la imagen." }]);
-      }
-      setLoading(false);
-      setImgLoading(false);
+        setMsgs([...next, { role:"assistant", content:data.content?.find(b=>b.type==="text")?.text||"No pude leer la imagen. ¿Puedes escribirme el texto?" }]);
+      } catch { setMsgs([...next, { role:"assistant", content:"Ha habido un problema al analizar la imagen." }]); }
+      setLoading(false); setImgLoading(false);
     };
     reader.readAsDataURL(file);
   };
@@ -494,14 +483,11 @@ export default function App() {
 
   const onBooked = (d) => {
     setTimeout(()=>setMsgs(p=>[...p,{role:"assistant",content:`Perfecto, cita reservada para el ${d} 🗓️\n\nTe contactaremos para confirmarla.`}]),400);
-    // Send WhatsApp notification to admin
-    const msg = encodeURIComponent(`Nueva cita GestiFR 📅\nFecha: ${d}\n\nPor favor confirma la disponibilidad.`);
-    window.open(`https://wa.me/33612186263?text=${msg}`, "_blank");
   };
 
   const share = () => {
     if (navigator.share) {
-      navigator.share({ title:"GestiFR", text:"Trámites en Francia en español — gestión profesional", url:window.location.href });
+      navigator.share({ title:"GestoriaFrance", text:"Trámites en Francia en español — gestión profesional", url:window.location.href });
     } else {
       navigator.clipboard?.writeText(window.location.href);
       alert("¡Enlace copiado!");
@@ -519,9 +505,9 @@ export default function App() {
   const onlineNow = isOnline();
 
   return (
-    <div style={{fontFamily:"'Inter','Segoe UI',sans-serif",minHeight:"100vh",background:T.bg,maxWidth:"100%",margin:"0 auto",display:"flex",flexDirection:"column",color:T.text,transition:"background 0.3s,color 0.3s"}}>
+    <div style={{fontFamily:"'Inter','Segoe UI',sans-serif",minHeight:"100vh",background:T.bg,maxWidth:480,margin:"0 auto",display:"flex",flexDirection:"column",color:T.text,transition:"background 0.3s,color 0.3s"}}>
       <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-      <style>{`*{box-sizing:border-box;margin:0;padding:0}html,body{width:100%;height:100%;overflow-x:hidden;}#root{width:100%;}::-webkit-scrollbar{display:none}input:focus,textarea:focus{border-color:${T.blue}!important;outline:none}::placeholder{color:${T.muted}}@keyframes pulse{0%,100%{box-shadow:0 4px 20px rgba(59,130,246,0.5)}50%{box-shadow:0 4px 30px rgba(59,130,246,0.8)}}@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}`}</style>
+      <style>{`*{box-sizing:border-box;margin:0;padding:0}::-webkit-scrollbar{display:none}input:focus,textarea:focus{border-color:${T.blue}!important;outline:none}::placeholder{color:${T.muted}}@keyframes pulse{0%,100%{box-shadow:0 4px 20px rgba(59,130,246,0.5)}50%{box-shadow:0 4px 30px rgba(59,130,246,0.8)}}@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}`}</style>
 
       {showCal && <Modal onClose={()=>setShowCal(false)} onBooked={d=>{setShowCal(false);onBooked(d);}} T={T}/>}
       {selectedService && (
@@ -571,7 +557,7 @@ export default function App() {
               <div style={{display:"flex",gap:8,marginBottom:12}}>
                 <Av/>
                 <div style={{display:"flex",flexDirection:"column",gap:3}}>
-                  <span style={{fontSize:11,color:T.muted,fontWeight:600,paddingLeft:2}}>{ADVISOR.name} · GestiFR</span>
+                  <span style={{fontSize:11,color:T.muted,fontWeight:600,paddingLeft:2}}>{ADVISOR.name} · GestoriaFrance</span>
                   <div style={{background:T.card2,borderRadius:"4px 18px 18px 18px",border:`1px solid ${T.line}`}}><Dots T={T}/></div>
                 </div>
               </div>
@@ -694,7 +680,7 @@ export default function App() {
                   </div>
                   <div style={{flex:1}}>
                     <div style={{fontSize:13,fontWeight:700,color:T.text}}>Nuestro equipo</div>
- <div style={{fontSize:11,color:T.muted,marginTop:1}}>Elena · Luna · María</div>
+                    <div style={{fontSize:11,color:T.muted,marginTop:1}}>Elena · Luna · María</div>
                   </div>
                   <div style={{display:"flex",alignItems:"center",gap:5}}>
                     <div style={{width:7,height:7,borderRadius:"50%",background:onlineNow?T.green:"#94A3B8"}}/>
@@ -816,15 +802,7 @@ export default function App() {
                     </div>
                   </div>
                 ))}
-                {/* Custom request banner */}
-                <a href="https://wa.me/33612186263" style={{textDecoration:"none",display:"block",background:"linear-gradient(135deg,#16A34A,#22C55E)",borderRadius:14,padding:"16px 18px",marginBottom:12,cursor:"pointer"}}>
-                  <div style={{fontSize:13,fontWeight:800,color:"white",marginBottom:4}}>¿No encuentras lo que necesitas?</div>
-                  <div style={{fontSize:12,color:"rgba(255,255,255,0.85)",lineHeight:1.55,marginBottom:12}}>Te ayudamos con cualquier trámite en Francia. Escríbenos por WhatsApp y te contestamos lo antes posible.</div>
-                  <div style={{display:"inline-flex",alignItems:"center",gap:8,background:"rgba(255,255,255,0.2)",borderRadius:20,padding:"7px 14px"}}>
-                    <span style={{fontSize:16}}>📱</span>
-                    <span style={{fontSize:12,fontWeight:700,color:"white"}}>Escribir por WhatsApp</span>
-                  </div>
-                </a>                <div onClick={()=>setShowCal(true)} style={{background:"linear-gradient(135deg,#1E3A8A,#1D4ED8)",borderRadius:14,padding:"14px 16px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",border:"1px solid #2563EB"}}>
+                <div onClick={()=>setShowCal(true)} style={{background:"linear-gradient(135deg,#1E3A8A,#1D4ED8)",borderRadius:14,padding:"14px 16px",display:"flex",alignItems:"center",gap:14,cursor:"pointer",border:"1px solid #2563EB"}}>
                   <div style={{width:44,height:44,borderRadius:12,background:"rgba(255,255,255,0.1)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22}}>📅</div>
                   <div style={{flex:1}}>
                     <div style={{fontSize:13.5,fontWeight:700,color:"white"}}>Agendar cita con gestor</div>
@@ -906,7 +884,7 @@ export default function App() {
                   </div>
                 </div>
                 {[
-                  {icon:"📋",title:"Aviso Legal",content:"GestiFR es un servicio de asistencia administrativa. No somos abogados ni asesores jurídicos. Ofrecemos orientación y gestión de trámites en nombre del cliente, con su autorización expresa. Para trámites jurídicos recomendamos consultar con un profesional habilitado."},
+                  {icon:"📋",title:"Aviso Legal",content:"GestoriaFrance es un servicio de asistencia administrativa. No somos abogados ni asesores jurídicos. Ofrecemos orientación y gestión de trámites en nombre del cliente, con su autorización expresa. Para trámites jurídicos recomendamos consultar con un profesional habilitado."},
                   {icon:"✍️",title:"Mandato del cliente",content:"Cuando actuamos en nombre de un cliente ante organismos oficiales (CAF, CPAM, France Travail...), solicitamos un mandato escrito firmado antes de iniciar cualquier gestión."},
                   {icon:"🔒",title:"Política de Privacidad (RGPD)",content:"Solo recogemos los datos necesarios para gestionar tu trámite. No cedemos ni vendemos tus datos. Los conservamos un máximo de 3 años. Tienes derecho de acceso, rectificación y supresión. Esta app no usa cookies de seguimiento."},
                 ].map(item=>(
@@ -926,4 +904,4 @@ export default function App() {
       )}
     </div>
   );
-                  }
+}
